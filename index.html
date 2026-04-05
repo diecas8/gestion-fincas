@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Finca - Acceso</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</head>
+<body>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="logo">🌿 Mi Finca</div>
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Iniciar sesión</button>
+      <button class="tab" data-tab="register">Registrarse</button>
+    </div>
+    <div id="loginPanel" class="auth-panel active">
+      <input type="email" id="loginEmail" placeholder="Correo electrónico" class="auth-input">
+      <input type="password" id="loginPass" placeholder="Contraseña" class="auth-input">
+      <button id="loginBtn" class="btn-primary">Ingresar</button>
+    </div>
+    <div id="registerPanel" class="auth-panel">
+      <input type="email" id="regEmail" placeholder="Correo electrónico" class="auth-input">
+      <input type="password" id="regPass" placeholder="Contraseña (mínimo 6 caracteres)" class="auth-input">
+      <button id="registerBtn" class="btn-primary">Crear cuenta</button>
+    </div>
+    <div id="authMsg" class="msg"></div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('loginPanel').style.display = tab.dataset.tab === 'login' ? 'block' : 'none';
+      document.getElementById('registerPanel').style.display = tab.dataset.tab === 'register' ? 'block' : 'none';
+    });
+  });
+  document.getElementById('loginBtn').onclick = () => login(document.getElementById('loginEmail').value, document.getElementById('loginPass').value);
+  document.getElementById('registerBtn').onclick = () => register(document.getElementById('regEmail').value, document.getElementById('regPass').value);
+</script>
+</body>
+</html>
