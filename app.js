@@ -1,6 +1,6 @@
 // app.js
-const SUPABASE_URL = "https://TU_PROYECTO.supabase.co";      // ← reemplaza
-const SUPABASE_ANON_KEY = "sb_publishable_...";               // ← reemplaza con tu publishable key
+const SUPABASE_URL = "https://tekjgrrshwqvmtfbcikc.supabase.co";      // ← reemplaza
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRla2pncnJzaHdxdm10ZmJjaWtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTc3MjQsImV4cCI6MjA5MDk3MzcyNH0.Am7MRaitxlWAaMv2Fc0vlwSsQA9mrOysfrThLFF-R3Q";               // ← reemplaza con tu publishable key
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
