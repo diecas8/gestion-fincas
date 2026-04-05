@@ -1,0 +1,15 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+body { background: #f1f5f9; height: 100vh; display: flex; align-items: center; justify-content: center; }
+.auth-container { width: 100%; padding: 20px; }
+.auth-card { background: white; border-radius: 32px; padding: 32px; max-width: 420px; margin: auto; box-shadow: 0 20px 35px -8px rgba(0,0,0,0.1); }
+.logo { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 24px; color: #1565c0; }
+.tabs { display: flex; gap: 8px; background: #f1f5f9; padding: 4px; border-radius: 60px; margin-bottom: 24px; }
+.tab { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 40px; font-weight: 500; cursor: pointer; }
+.tab.active { background: white; color: #1565c0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.auth-panel { display: none; }
+.auth-panel.active { display: block; }
+.auth-input { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 16px; margin-bottom: 16px; font-size: 16px; }
+.btn-primary { width: 100%; padding: 14px; background: #1565c0; color: white; border: none; border-radius: 16px; font-weight: 600; cursor: pointer; }
+.btn-primary:hover { background: #0d4a90; }
+.msg { margin-top: 16px; text-align: center; font-size: 14px; color: #dc2626; }
+.toast-message { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 10px 20px; border-radius: 40px; z-index: 9999; font-size: 14px; }
