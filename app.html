@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mi Finca - Panel del Productor</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  <style>
+    /* Los estilos ya están en styles.css, pero añadimos algunos específicos */
+    .app-container { display: flex; flex-direction: column; height: 100vh; }
+    .header { background: white; border-bottom: 1px solid #e2e8f0; padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .workspace { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 340px; background: white; border-right: 1px solid #e2e8f0; overflow-y: auto; }
+    .map-container { flex: 1; }
+    #map { height: 100%; width: 100%; }
+    .section { padding: 16px 20px; border-bottom: 1px solid #eef2ff; }
+    .section-title { font-size: 11px; text-transform: uppercase; font-weight: 600; color: #64748b; margin-bottom: 12px; }
+    .finca-card, .lote-card { background: #f8fafc; border-radius: 16px; padding: 12px; margin-bottom: 12px; cursor: pointer; }
+    .btn-primary { background: #1565c0; color: white; border: none; padding: 10px 16px; border-radius: 12px; width: 100%; margin-top: 8px; cursor: pointer; }
+    .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #0f172a; }
+    .toast-message { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 10px 20px; border-radius: 40px; z-index: 9999; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; }
+    .modal-card { background: white; border-radius: 24px; max-width: 520px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 24px; }
+    .modal-input, .modal-select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 12px; }
+    @media (max-width: 768px) { .sidebar { position: absolute; left: -340px; height: 100%; z-index: 10; } .sidebar.open { left: 0; } .menu-btn { display: block; } }
+    .menu-btn { display: none; background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px; margin-right: 12px; }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div style="display: flex; align-items: center;">
+      <button class="menu-btn" id="menuToggle">☰</button>
+      <div class="logo" style="font-size: 18px; font-weight: 700;">🌿 Mi Finca</div>
+    </div>
+    <button id="logoutBtn" class="btn-outline" style="width: auto; padding: 6px 16px;">Salir</button>
+  </div>
+  <div class="workspace">
+    <div class="sidebar" id="sidebar">
+      <div style="padding: 20px 20px 12px; display: flex; justify-content: space-between;">
+        <strong>Mis datos</strong>
+        <button class="close-sidebar" id="closeSidebar" style="background:none; border:none; font-size:20px;">✕</button>
+      </div>
+      <div class="section">
+        <div class="section-title">👤 Propietario</div>
+        <div id="propietarioInfo">Cargando...</div>
+        <button id="editarPropietarioBtn" class="btn-outline" style="margin-top: 8px;">Editar mis datos</button>
+      </div>
+      <div class="section">
+        <div class="section-title">🏡 Fincas</div>
+        <button id="nuevaFincaBtn" class="btn-primary">+ Nueva finca</button>
+        <div id="fincasList" style="margin-top: 12px;"></div>
+      </div>
+      <div class="section" id="lotesSection" style="display: none;">
+        <div class="section-title">📌 Lotes de <span id="fincaActualNombre"></span></div>
+        <button id="nuevoLoteBtn" class="btn-primary">+ Dibujar lote</button>
+        <div id="lotesList" style="margin-top: 12px;"></div>
+        <button id="exportarMapaBtn" class="btn-outline" style="margin-top: 12px;">📄 Exportar finca a PDF</button>
+      </div>
+      <div class="section">
+        <div class="section-title">🌐 Mapas base</div>
+        <div id="basemapSelector" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+      </div>
+    </div>
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+  </div>
+</div>
+<div id="modal" class="modal-overlay">
+  <div class="modal-card">
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+    <div style="display: flex; gap: 12px; margin-top: 20px;">
+      <button id="modalCancel" class="btn-primary" style="background: #cbd5e1; color: #0f172a;">Cancelar</button>
+      <button id="modalConfirm" class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+<script src="productor.js"></script>
+<script>
+  document.getElementById('menuToggle').onclick = () => document.getElementById('sidebar').classList.add('open');
+  document.getElementById('closeSidebar').onclick = () => document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('logoutBtn').onclick = logout;
+  window.addEventListener('load', () => initProductorApp());
+</script>
+</body>
+</html>
