@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Finca - Panel del Productor</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Leaflet & Draw -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div style="display:flex;align-items:center;">
+        <button id="menuBtn" class="menu-btn">☰</button>
+        <span class="logo" style="margin:0;font-size:20px;">🌿 Mi Finca</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span id="userEmail" style="font-size:14px;color:#64748b;"></span>
+        <button id="logoutBtn" class="btn-outline" style="padding:8px 16px;">Salir</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar" id="sidebar">
+        <div class="section">
+          <div class="section-title">👤 Propietario</div>
+          <div id="propietarioInfo" style="margin-bottom:12px;font-size:14px;line-height:1.5;color:#334155;">Cargando...</div>
+          <button id="editarPropietarioBtn" class="btn-primary btn-sm">Editar mis datos</button>
+        </div>
+
+        <div class="section">
+          <div class="section-title">🏡 Fincas</div>
+          <div id="fincasList" style="min-height:60px;"></div>
+          <button id="nuevaFincaBtn" class="btn-primary">+ Nueva finca</button>
+        </div>
+
+        <div id="lotesSection" class="section" style="display:none;">
+          <div class="section-title">📌 Lotes de <span id="fincaActualNombre" style="color:#1565c0;"></span></div>
+          <div id="lotesList" style="min-height:60px;"></div>
+          <button id="nuevoLoteBtn" class="btn-primary">+ Dibujar lote</button>
+        </div>
+
+        <div class="section">
+          <div class="section-title">🌐 Mapas base</div>
+          <div id="basemapSelector" class="basemap-grid"></div>
+        </div>
+      </aside>
+
+      <main class="map-container">
+        <div id="map"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Genérico -->
+  <div id="modal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h2 id="modalTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
+        <button id="modalClose" class="close-sidebar">✕</button>
+      </div>
+      <div id="modalBody"></div>
+      <div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end;">
+        <button id="modalCancel" class="btn-primary btn-outline">Cancelar</button>
+        <button id="modalConfirm" class="btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+  <script src="productor.js"></script>
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    window.addEventListener('DOMContentLoaded', () => initProductorApp());
+  </script>
+</body>
+</html>
